@@ -1,0 +1,163 @@
+<div id="app">
+  <div id="stage">
+    <canvas id="cv"></canvas>
+
+    <!-- 图1：开始界面 -->
+    <section id="scr-start" class="screen">
+      <div class="start-title">
+        <div class="eyebrow">活动小游戏</div>
+        <h1>弹珠游园会</h1>
+        <p class="sub">三次发射 · 撞响道具 · 冲上排行</p>
+      </div>
+      <div class="start-menu">
+        <button class="btn big primary" id="btn-enter" type="button">进入游戏</button>
+        <button class="btn big" id="btn-admin" type="button">设置</button>
+        <button class="btn big gold" id="btn-archive" type="button">存档</button>
+        <button class="btn big ghost" id="btn-quit" type="button">退出游戏</button>
+      </div>
+      <div class="start-foot">“设置”调整活动参数；“存档”查看、导出和删除所有玩家成绩</div>
+    </section>
+
+    <!-- 图2：游戏主界面 -->
+    <section id="scr-lobby" class="screen" hidden>
+      <header class="lobby-head"><h2>弹珠游园会</h2><span class="map-chip" id="lobby-map"></span><button class="icon-btn help-chip" id="btn-help-lobby" type="button" aria-label="道具说明">?</button></header>
+      <div class="lobby-info" id="lobby-info"></div>
+      <div class="lobby-actions">
+        <button class="btn primary" id="btn-start" type="button">开始游戏</button>
+        <button class="btn" id="btn-settings" type="button">游戏设置</button>
+        <button class="btn ghost" id="btn-back" type="button">退出</button>
+      </div>
+      <aside class="board-rank">
+        <div class="rank-head"><h3>排行榜</h3><div class="rank-meta" id="rank-meta"></div></div>
+        <ol class="rank-list" id="rank-list"></ol>
+      </aside>
+    </section>
+
+    <!-- 游戏内 -->
+    <div id="game-ui" hidden>
+      <button class="icon-btn" id="btn-help-game" type="button" aria-label="道具说明">?</button>
+      <button class="icon-btn" id="btn-pause" type="button" aria-label="暂停">❚❚</button>
+    </div>
+
+    <!-- 图3：昵称与邮箱 -->
+    <div class="modal" id="m-player" hidden>
+      <form class="panel" id="form-player" novalidate>
+        <h3>参赛信息</h3>
+        <div class="field"><label for="in-nick">昵称</label><input id="in-nick" maxlength="12" autocomplete="nickname" placeholder="最多 12 个字"></div>
+        <div class="field"><label for="in-mail">邮箱</label><input id="in-mail" type="email" maxlength="64" autocomplete="email" placeholder="name@example.com"></div>
+        <p class="err" id="player-err"></p>
+        <p class="hint">同一邮箱＋昵称只保留最高分；排行榜不会显示完整邮箱。</p>
+        <div class="row-actions">
+          <button class="btn ghost small" id="btn-player-cancel" type="button" style="color:var(--ink);border-color:var(--ink)">返回</button>
+          <button class="btn primary" type="submit">开始挑战</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- 游戏设置：音乐 / 音效 / 抖动 -->
+    <div class="modal" id="m-settings" hidden>
+      <div class="panel">
+        <h3>游戏设置</h3>
+        <div class="set-row"><label for="set-music">音乐</label><input type="range" id="set-music" min="0" max="100" step="5"><output id="out-music"></output></div>
+        <div class="set-row"><label for="set-sfx">音效</label><input type="range" id="set-sfx" min="0" max="100" step="5"><output id="out-sfx"></output></div>
+        <div class="set-row"><span>屏幕抖动</span><label class="toggle"><input type="checkbox" id="set-shake"> 密集得分时小幅抖动</label><span></span></div>
+        <div class="set-row" id="row-fullscreen" hidden><span>全屏显示</span><label class="toggle"><input type="checkbox" id="set-full"> 全屏（也可按 F11）</label><span></span></div>
+        <div class="row-actions"><button class="btn gold" id="btn-settings-ok" type="button">完成</button></div>
+      </div>
+    </div>
+
+    <!-- 活动参数（开始界面“设置”） -->
+    <div class="modal" id="m-admin" hidden>
+      <div class="panel">
+        <h3>活动参数</h3>
+        <p class="hint">修改地图、目标分、道具分值或物理参数会生成新的规则版本，排行榜按版本分开记录。</p>
+        <div class="admin-body" id="admin-body"></div>
+        <div class="admin-foot">
+          <div class="grow" id="admin-ver"></div>
+          <span class="danger-confirm" id="clear-confirm" hidden>再点一次确认清空</span>
+          <button class="btn ghost small" id="btn-admin-clear" type="button" style="color:#B3301A;border-color:#B3301A">清空当前榜单</button>
+          <button class="btn ghost small" id="btn-admin-reset" type="button" style="color:var(--ink);border-color:var(--ink)">恢复默认</button>
+          <button class="btn ghost small" id="btn-admin-cancel" type="button" style="color:var(--ink);border-color:var(--ink)">取消</button>
+          <button class="btn teal small" id="btn-admin-save" type="button">保存</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 图8：结算 -->
+    <div class="modal" id="m-result" hidden>
+      <div class="res-top">
+        <div class="res-title" id="res-title">通关成功</div>
+        <div class="res-score">本场得分 <b id="res-score">0</b> <small id="res-target"></small></div>
+      </div>
+      <div class="res-bottom">
+        <div class="res-me">
+          <div class="res-card"><div class="k">个人最高分</div><div class="v" id="res-best">0</div></div>
+          <div class="res-card"><div class="k">个人最高分当前名次</div><div class="v" id="res-rank">-</div></div>
+        </div>
+        <ol class="res-list" id="res-list"></ol>
+        <div class="res-note" id="res-note"></div>
+      </div>
+      <button class="btn gold" id="btn-ok" type="button">确定</button>
+    </div>
+
+    <div class="modal" id="m-pause" hidden>
+      <div class="panel">
+        <h3>已暂停</h3>
+        <div class="row-actions">
+          <button class="btn primary" id="btn-resume" type="button">继续游戏</button>
+          <button class="btn ghost small" id="btn-abandon" type="button" style="color:var(--ink);border-color:var(--ink)">放弃本局，返回主界面（不记录成绩）</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="m-bye" hidden>
+      <div class="panel">
+        <h3>已退出游戏</h3>
+        <p class="hint">感谢参与！关闭此页面即可离开。</p>
+        <div class="row-actions"><button class="btn primary" id="btn-reenter" type="button">重新进入</button></div>
+      </div>
+    </div>
+
+    <!-- 存档：所有玩家成绩，可删除 -->
+    <div class="modal" id="m-archive" hidden>
+      <div class="panel">
+        <div class="arc-head">
+          <h3>存档</h3>
+          <p class="hint" id="arc-where"></p>
+        </div>
+        <div class="arc-tools">
+          <label class="arc-select">榜单<select id="arc-board"></select></label>
+          <input id="arc-search" type="search" placeholder="搜索昵称或邮箱" autocomplete="off">
+          <span class="grow"></span>
+          <button class="btn small" id="btn-arc-open" type="button" hidden>打开存档文件夹</button>
+          <button class="btn small" id="btn-arc-export" type="button">导出表格（CSV）</button>
+          <button class="btn small danger" id="btn-arc-clear" type="button">清空此榜单</button>
+        </div>
+        <div class="arc-table-wrap">
+          <table class="arc-table">
+            <thead><tr><th>名次</th><th>昵称</th><th>邮箱</th><th class="num">最高分</th><th class="num">次数</th><th>最高分时间</th><th></th></tr></thead>
+            <tbody id="arc-body"></tbody>
+          </table>
+          <div class="arc-empty" id="arc-empty" hidden>这个榜单还没有成绩</div>
+        </div>
+        <div class="arc-foot">
+          <span id="arc-count"></span>
+          <span class="grow"></span>
+          <button class="btn gold" id="btn-arc-close" type="button">关闭</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 道具说明 -->
+    <div class="modal" id="m-help" hidden>
+      <div class="panel">
+        <h3 id="help-title">道具说明</h3>
+        <div class="help-body" id="help-body"></div>
+        <div class="row-actions"><button class="btn gold" id="btn-help-close" type="button">知道了</button></div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast" hidden></div>
+  </div>
+  <div id="rotate-hint">横屏体验更佳</div>
+</div>

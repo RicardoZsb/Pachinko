@@ -1,0 +1,9 @@
+/build/
+/dist/
+__pycache__/
+*.pyc
+
+# 本地玩家存档和排行榜
+存档.json
+存档.上次启动备份.json
+排行榜.csv
