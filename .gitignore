@@ -1,5 +1,6 @@
 /build/
 /dist/
+/弹珠游园会.exe
 __pycache__/
 *.pyc
 
@@ -7,3 +8,4 @@ __pycache__/
 存档.json
 存档.上次启动备份.json
 排行榜.csv
+排行榜_*.csv

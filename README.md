@@ -7,8 +7,9 @@
 
 ## 下载与协作
 
-- Windows 玩家可以直接[下载弹珠游园会.exe](https://github.com/RicardoZsb/Pachinko/raw/refs/heads/main/%E5%BC%B9%E7%8F%A0%E6%B8%B8%E5%9B%AD%E4%BC%9A.exe)。
-- 也可以[下载整个项目 ZIP](https://github.com/RicardoZsb/Pachinko/archive/refs/heads/main.zip)。解压后，双击 `index.html` 即可使用网页版。
+- Windows 玩家可以[下载 Windows 64 位单文件版](https://github.com/RicardoZsb/Pachinko/raw/refs/heads/main/packages/windows-x64/%E5%BC%B9%E7%8F%A0%E6%B8%B8%E5%9B%AD%E4%BC%9A.exe)，保存后双击即可运行。
+- 浏览器玩家可以[下载单文件网页版](https://github.com/RicardoZsb/Pachinko/raw/refs/heads/main/index.html)，用浏览器打开即可。
+- 开发者可以[下载稳定分支 ZIP](https://github.com/RicardoZsb/Pachinko/archive/refs/heads/main.zip)，或克隆仓库。`main` 保存稳定版本，`develop` 用于日常开发。协作者将测试通过的改动从 `develop` 提交拉取请求，合并到 `main`。
 - 任何人都可以下载。需要直接推送改动的协作者，由仓库所有者在 GitHub 的 **Settings → Collaborators** 中邀请，对方接受邀请后即可参与编辑。
 
 ## 运行 Windows 软件
@@ -67,7 +68,7 @@
 
 | 文件 | 用途 |
 | --- | --- |
-| `弹珠游园会.exe` | Windows 软件成品 |
+| `packages/windows-x64/弹珠游园会.exe` | 经确认的 Windows 64 位成品，发布版本时原样上传 |
 | `index.html` | 网页版成品 |
 | `src/core.js` | 规则和物理：道具、地图、自动拨杆、计分。不依赖网页，可以单独在 Node 里运行 |
 | `src/render.js` | 画面 |
@@ -93,6 +94,8 @@ python build.py --app    # 同时生成 Windows 软件：dist/弹珠游园会.ex
 1. 把页面、字体和图标打成 `resources.neu`。
 2. 用 `tools/win/patch-exe.cjs` 把它嵌进 `vendor/neutralino-win_x64.exe`，同时换上图标和版本信息。
 3. 输出单文件 exe。
+
+发布新版本时，在 `main` 上确认 `build.py` 的版本号，将验收后的 EXE 放入 `packages/windows-x64/`，并更新根目录的 `index.html`。在 GitHub Releases 为稳定提交创建版本标签（例如 `v2.1.0`），将这两个文件分别以 `Pachinko-Windows-x64.exe` 和 `Pachinko-Web.html` 为名上传。
 
 ## 许可
 
